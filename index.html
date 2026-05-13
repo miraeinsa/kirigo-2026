@@ -100,19 +100,29 @@
     image-rendering: pixelated;
   }
 
-  /* ===== 픽셀 손 SVG 컨테이너 ===== */
+  /* ===== 손 이미지 컨테이너 ===== */
   .hands-wrap {
     display: flex;
     justify-content: center;
     margin: 8px 0 36px;
+    perspective: 800px;
   }
 
-  .hands-svg {
-    width: 180px;
-    height: auto;
+  .hands-img {
+    width: 200px;
+    height: 200px;
+    display: block;
+    object-fit: contain;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     filter: drop-shadow(0 0 12px rgba(255,255,255,0.15));
+    transform-origin: center center;
+    animation: spin 6s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
   }
 
   /* ===== 카드 ===== */
@@ -347,10 +357,12 @@
   }
 
   .modal-hands {
-    width: 100px;
+    width: 120px;
+    height: auto;
     margin: 0 auto 16px;
     display: block;
     image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
 
   .modal h3 {
@@ -404,9 +416,9 @@
   <!-- 기리고 로고 -->
   <div class="brand-logo">기리고</div>
 
-  <!-- 픽셀 손모양 -->
+  <!-- 손 이미지 -->
   <div class="hands-wrap">
-    <svg class="hands-svg" id="handsSvg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"></svg>
+    <img class="hands-img" src="hands.png" alt="기리고" />
   </div>
 
   <!-- 안내 -->
@@ -459,7 +471,7 @@
 <!-- 완료 모달 -->
 <div class="modal" id="modal">
   <div class="modal-card">
-    <svg class="modal-hands" id="modalHands" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"></svg>
+    <img class="modal-hands" src="hands.png" alt="" />
     <h3>소원 전송 완료</h3>
     <p>주관 부서에서 일정·숙박지별로<br/>오프라인 게임 일정을 안내드릴 예정입니다.<br/>건강한 여름 되세요.</p>
     <button class="modal-close" id="modalClose">닫기</button>
@@ -472,58 +484,6 @@
   // ============================================================
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFTRsxU-j4eDRrmwNGanPTRmsZce3uOVOaVKd7LrGQJCX8xoOXvkm6f7liLXnXrHfBRQ/exec";
   const MAX_SIZE = 10 * 1024 * 1024;
-
-  // ============================================================
-  // 🙏 픽셀 손모양 - 20 x 24 그리드 (1=흰픽셀)
-  // ============================================================
-  const handsGrid = [
-    "..........##..........",
-    ".........####.........",
-    "........######........",
-    ".......##.##.##.......",
-    "......##..##..##......",
-    "......##..##..##......",
-    ".....##...##...##.....",
-    ".....##...##...##.....",
-    "....##....##....##....",
-    "....##....##....##....",
-    "...##.....##.....##...",
-    "...##.....##.....##...",
-    "..##......##......##..",
-    "..##......##......##..",
-    "..##......##......##..",
-    "...##....####....##...",
-    "....##..######..##....",
-    ".....################.",
-    ".....################.",
-    "....##################",
-    "....##################",
-    ".....################.",
-    "......##############..",
-    ".......############..."
-  ];
-
-  function renderPixelHands(svgEl, pixelSize) {
-    const ns = 'http://www.w3.org/2000/svg';
-    handsGrid.forEach((row, y) => {
-      [...row].forEach((ch, x) => {
-        if (ch === '#') {
-          const r = document.createElementNS(ns, 'rect');
-          r.setAttribute('x', x * pixelSize);
-          r.setAttribute('y', y * pixelSize);
-          r.setAttribute('width', pixelSize);
-          r.setAttribute('height', pixelSize);
-          r.setAttribute('fill', '#ffffff');
-          svgEl.appendChild(r);
-        }
-      });
-    });
-  }
-
-  // 메인 화면 (180px → 8px per pixel)
-  renderPixelHands(document.getElementById('handsSvg'), 8);
-  // 모달 (100px → 5px per pixel)
-  renderPixelHands(document.getElementById('modalHands'), 5);
 
   // ============================================================
   // 📤 업로드 / 전송 로직
